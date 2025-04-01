@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/navigation/nav_graph.xml -->
+<fragment android:id="@+id/homeFragment"
+    android:name="com.example.nous.HomeFragment"
+    android:label="Home"
+    xmlns:android="http://schemas.android.com/apk/res/android" />

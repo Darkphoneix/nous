@@ -26,7 +26,7 @@ class MainActivity<PhilosophyViewModel> : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        binding.textView.text = "Test"
         // ViewModel'i başlat
         val dao = PhilosophyDatabase.getDatabase(this).philosophyDao()
         viewModel = ViewModelProvider(
