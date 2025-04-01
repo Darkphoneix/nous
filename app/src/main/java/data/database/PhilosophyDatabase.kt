@@ -1,8 +1,14 @@
-package database
+package data.database
+
+import android.content.Context
+import androidx.room.Database
+import androidx.room.Room
+import androidx.room.RoomDatabase
+import data.UserProgress
 
 // database/PhilosophyDatabase.kt
 @Database(
-    entities = [PhilosophyTopic::class, UserProgress::class],
+    entities = [PhilosophyTopic::class, UserProgress::class], // ✅ Her iki entity'yi ekleyin
     version = 1,
     exportSchema = false
 )

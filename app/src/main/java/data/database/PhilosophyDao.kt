@@ -1,13 +1,17 @@
-package database
+package data.database
 
 import androidx.room.Dao
+import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
+import data.PhilosophyTopic
+import data.UserProgress
 import kotlinx.coroutines.flow.Flow
 
 // database/PhilosophyDao.kt
 @Dao
 interface PhilosophyDao {
-    @Query("SELECT * FROM philosophy_topics")
+    @Query("SELECT * FROM philosophy_topics") // ✅ Doğru tablo adı
     fun getAllTopics(): Flow<List<PhilosophyTopic>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

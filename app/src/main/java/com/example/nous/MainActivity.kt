@@ -6,9 +6,15 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import database.PhilosophyDatabase
+import data.PhilosophyTopic
+import data.database.PhilosophyDatabase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.produce
 import repository.PhilosophyRepository
+import viewmodel.PhilosophyViewModel
 
 // MainActivity.kt
 class MainActivity<PhilosophyViewModel> : AppCompatActivity() {
@@ -23,7 +29,10 @@ class MainActivity<PhilosophyViewModel> : AppCompatActivity() {
 
         // ViewModel'i başlat
         val dao = PhilosophyDatabase.getDatabase(this).philosophyDao()
-        viewModel = ViewModelProvider(this, PhilosophyViewModelFactory(PhilosophyRepository(dao)))[PhilosophyViewModel::class.java]
+        viewModel = ViewModelProvider(
+            this,
+            PhilosophyViewModelFactory(PhilosophyRepository(dao))
+        )[PhilosophyViewModel::class.java]
 
         // RecyclerView'ı ayarla
         adapter = TopicAdapter(emptyList()) { topicId -> viewModel.completeTopic(topicId) }
@@ -32,34 +41,31 @@ class MainActivity<PhilosophyViewModel> : AppCompatActivity() {
 
         // LiveData'yı observe et
         viewModel.topics.observe(this) { adapter.updateTopics(it) }
-        viewModel.userProgress.observe(this) { binding.tvStreak.text = "Günlük Seri: ${it.dailyStreak}" }
-        
-        CoroutineScope(Dispatchers.IO).launch {
+        viewModel.userProgress.observe(this) {
+            binding.tvStreak.text = "Günlük Seri: ${it.dailyStreak}"
+        }
+
+        CoroutineScope(Dispatchers.IO).produce<> {  }launch {
             val dao = PhilosophyDatabase.getDatabase(this@MainActivity).philosophyDao()
             if (dao.getAllTopics().first().isEmpty()) {
-                // Test verilerini ekle
                 dao.insertTopics(
                     listOf(
                         PhilosophyTopic(
                             title = "Stoacılık Temelleri",
                             philosopher = "Epiktetos",
                             difficulty = "Başlangıç"
-                        ),
-                        PhilosophyTopic(
-                            title = "Übermensch",
-                            philosopher = "Nietzsche",
-                            difficulty = "Orta"
                         )
                     )
                 )
-                dao.insertUserProgress(UserProgress())
             }
         }
     }
-}
-// ViewModelFactory
-class PhilosophyViewModelFactory(private val repository: PhilosophyRepository) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return PhilosophyViewModel(repository) as T
+
+    // ViewModelFactory
+    class PhilosophyViewModelFactory(private val repository: PhilosophyRepository) :
+        ViewModelProvider.Factory {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            return PhilosophyViewModel(repository) as T
+        }
     }
 }
