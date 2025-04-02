@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import com.example.nous.models.Question
 
 class AdminActivity : AppCompatActivity() {
     private lateinit var levelNameInput: EditText
@@ -89,7 +90,7 @@ class AdminActivity : AppCompatActivity() {
         }
 
         questions.add(Question(
-            questions.size.toString(),
+            questions.size,
             questionText,
             options,
             correctIndex,
