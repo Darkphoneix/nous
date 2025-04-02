@@ -1,4 +1,4 @@
-package com.example.philosophyapp
+package com.example.nous
 
 import android.os.Bundle
 import android.widget.Button
@@ -6,8 +6,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
-import com.example.nous.R
-import com.example.nous.Question
+
 
 class MainActivity : AppCompatActivity() {
     private lateinit var progressTextView: TextView
