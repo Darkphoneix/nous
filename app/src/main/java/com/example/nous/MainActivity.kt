@@ -1,22 +1,20 @@
 package com.example.nous
 
+import android.net.Uri
 import android.os.Bundle
-import android.widget.Button
-import android.widget.ProgressBar
-import android.widget.TextView
-import android.graphics.Color
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 
-
 class MainActivity : AppCompatActivity() {
+    private lateinit var levelTextView: TextView
+    private lateinit var videoView: VideoView
     private lateinit var progressTextView: TextView
     private lateinit var progressBar: ProgressBar
     private lateinit var questionTextView: TextView
-    private lateinit var option1Button: Button
-    private lateinit var option2Button: Button
-    private lateinit var option3Button: Button
-    private lateinit var option4Button: Button
+    private lateinit var optionsLayout: LinearLayout
+    private lateinit var optionButtons: List<Button>
 
+    private var currentLevel: Level? = null
     private var currentQuestionIndex = 0
     private var correctAnswers = 0
 
@@ -25,104 +23,110 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         initializeViews()
-        setupQuestion()
-        setupClickListeners()
+        loadLevel()
     }
 
     private fun initializeViews() {
+        levelTextView = findViewById(R.id.levelTextView)
+        videoView = findViewById(R.id.videoView)
         progressTextView = findViewById(R.id.progressTextView)
         progressBar = findViewById(R.id.progressBar)
         questionTextView = findViewById(R.id.questionTextView)
-        option1Button = findViewById(R.id.option1Button)
-        option2Button = findViewById(R.id.option2Button)
-        option3Button = findViewById(R.id.option3Button)
-        option4Button = findViewById(R.id.option4Button)
+        optionsLayout = findViewById(R.id.optionsLayout)
+        optionButtons = listOf(
+            findViewById(R.id.option1Button),
+            findViewById(R.id.option2Button),
+            findViewById(R.id.option3Button),
+            findViewById(R.id.option4Button)
+        )
+    }
 
-        progressBar.max = questions.size
+    private fun loadLevel() {
+        // TODO: Load level data from database or storage
+        // For now, we'll use dummy data
+        currentLevel = Level(
+            1,
+            "Giriş: Felsefe Nedir?",
+            "android.resource://${packageName}/raw/intro_video",
+            listOf(
+                Question(1, "Felsefe kelimesinin kökeni nedir?",
+                    listOf("Philia", "Philosophia", "Sophia", "Philo"), 1, 1)
+                // Add more questions
+            )
+        )
+
+        setupVideo()
+    }
+
+    private fun setupVideo() {
+        currentLevel?.let { level ->
+            levelTextView.text = level.name
+            videoView.setVideoURI(Uri.parse(level.videoPath))
+            videoView.setOnCompletionListener {
+                startQuestions()
+            }
+            videoView.start()
+        }
+    }
+
+    private fun startQuestions() {
+        currentLevel?.let { level ->
+            progressBar.max = level.questions.size
+            setupQuestion()
+        }
     }
 
     private fun setupQuestion() {
-        val currentQuestion = questions[currentQuestionIndex]
-        questionTextView.text = currentQuestion.question
-        option1Button.text = currentQuestion.options[0]
-        option2Button.text = currentQuestion.options[1]
-        option3Button.text = currentQuestion.options[2]
-        option4Button.text = currentQuestion.options[3]
+        currentLevel?.let { level ->
+            if (currentQuestionIndex < level.questions.size) {
+                val question = level.questions[currentQuestionIndex]
+                questionTextView.text = question.question
 
-        progressTextView.text = "İlerleme: $currentQuestionIndex/${questions.size}"
-        progressBar.progress = currentQuestionIndex
-    }
+                question.options.forEachIndexed { index, option ->
+                    optionButtons[index].apply {
+                        text = option
+                        setOnClickListener { checkAnswer(index) }
+                    }
+                }
 
-    private fun setupClickListeners() {
-        val buttons = listOf(option1Button, option2Button, option3Button, option4Button)
-
-        buttons.forEachIndexed { index, button ->
-            button.setOnClickListener {
-                checkAnswer(index)
+                progressTextView.text = "İlerleme: $currentQuestionIndex/${level.questions.size}"
+                progressBar.progress = currentQuestionIndex
+            } else {
+                showResults()
             }
         }
     }
 
     private fun checkAnswer(selectedIndex: Int) {
-        val currentQuestion = questions[currentQuestionIndex]
-        val buttons = listOf(option1Button, option2Button, option3Button, option4Button)
+        currentLevel?.let { level ->
+            val question = level.questions[currentQuestionIndex]
 
-        buttons.forEach { it.isEnabled = false }
+            optionButtons.forEach { it.isEnabled = false }
 
-        if (selectedIndex == currentQuestion.correctIndex) {
-            buttons[selectedIndex].setBackgroundColor(Color.GREEN)
-            correctAnswers++
-        } else {
-            buttons[selectedIndex].setBackgroundColor(Color.RED)
-            buttons[currentQuestion.correctIndex].setBackgroundColor(Color.GREEN)
-        }
-
-        android.os.Handler().postDelayed({
-            buttons.forEach {
-                it.setBackgroundColor(getColor(R.color.purple_500))
-                it.isEnabled = true
-            }
-
-            currentQuestionIndex++
-            if (currentQuestionIndex < questions.size) {
-                setupQuestion()
+            if (selectedIndex == question.correctIndex) {
+                optionButtons[selectedIndex].setBackgroundColor(getColor(R.color.green))
+                correctAnswers++
             } else {
-                showResults()
+                optionButtons[selectedIndex].setBackgroundColor(getColor(R.color.red))
+                optionButtons[question.correctIndex].setBackgroundColor(getColor(R.color.green))
             }
-        }, 1500)
+
+            android.os.Handler().postDelayed({
+                optionButtons.forEach {
+                    it.setBackgroundColor(getColor(R.color.purple_500))
+                    it.isEnabled = true
+                }
+
+                currentQuestionIndex++
+                setupQuestion()
+            }, 1500)
+        }
     }
 
     private fun showResults() {
-        questionTextView.text = "Tebrikler!\nDoğru cevap sayınız: $correctAnswers/${questions.size}"
-        option1Button.visibility = Button.GONE
-        option2Button.visibility = Button.GONE
-        option3Button.visibility = Button.GONE
-        option4Button.visibility = Button.GONE
-    }
-
-    companion object {
-        val questions = listOf(
-            Question(
-                "Sokrates'in ünlü sözü nedir?",
-                listOf(
-                    "Bildiğim tek şey, hiçbir şey bilmediğimdir",
-                    "Düşünüyorum, öyleyse varım",
-                    "İnsan her şeyin ölçüsüdür",
-                    "Kendini bil"
-                ),
-                0
-            ),
-            Question(
-                "Determinizm nedir?",
-                listOf(
-                    "Her şeyin tesadüf olduğunu savunan görüş",
-                    "Her olayın bir nedeni olduğunu savunan görüş",
-                    "İnsanın özgür olduğunu savunan görüş",
-                    "Tanrının varlığını savunan görüş"
-                ),
-                1
-            ),
-            // Daha fazla soru ekleyebilirsiniz
-        )
+        currentLevel?.let { level ->
+            questionTextView.text = "Tebrikler!\nDoğru cevap sayınız: $correctAnswers/${level.questions.size}"
+            optionsLayout.visibility = LinearLayout.GONE
+        }
     }
 }
