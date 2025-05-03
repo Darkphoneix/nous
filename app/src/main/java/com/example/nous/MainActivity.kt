@@ -33,6 +33,8 @@ class MainActivity : AppCompatActivity() {
         loadLectures()
     }
 
+
+
     private fun initializeViews() {
         lectureTextView = findViewById(R.id.lectureTextView)
         videoView = findViewById(R.id.videoView)
