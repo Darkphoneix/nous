@@ -5,14 +5,21 @@
     android:orientation="vertical"
     android:padding="16dp">
 
+    <Button
+        android:id="@+id/exitButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:text="EXIT" />
+
     <TextView
         android:id="@+id/lectureTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:textSize="24sp"
+        android:layout_gravity="center|start"
         android:layout_marginBottom="8dp"
-        android:text="Seviye 1" />
+        android:text="Seviye 1"
+        android:textSize="24sp" />
 
     <VideoView
         android:id="@+id/videoView"

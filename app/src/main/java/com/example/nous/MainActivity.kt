@@ -16,6 +16,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var questionTextView: TextView
     private lateinit var optionsLayout: LinearLayout
     private lateinit var optionButtons: List<Button>
+    private lateinit var exitButton: Button
 
     private var lectures: List<Lecture> = listOf()
     private var currentLectureIndex = 0
@@ -28,7 +29,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         initializeViews()
         loadLectures()
     }
@@ -40,12 +40,14 @@ class MainActivity : AppCompatActivity() {
         progressBar = findViewById(R.id.progressBar)
         questionTextView = findViewById(R.id.questionTextView)
         optionsLayout = findViewById(R.id.optionsLayout)
+        exitButton = findViewById(R.id.exitButton)
         optionButtons = listOf(
             findViewById(R.id.option1Button),
             findViewById(R.id.option2Button),
             findViewById(R.id.option3Button),
             findViewById(R.id.option4Button)
         )
+
     }
 
     private fun loadLectures() {
