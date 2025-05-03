@@ -1,50 +1,22 @@
 package com.example.nous.repository
 
-import com.example.nous.api.AuthResponse
-import com.example.nous.api.LoginRequest
-import com.example.nous.api.NousApi
 import com.example.nous.data.model.*
-import javax.inject.Inject
 
-class NousRepository @Inject constructor(
-    private val api: NousApi
-) {
-    suspend fun login(email: String, password: String): Result<AuthResponse> {
-        return try {
-            val response = api.login(LoginRequest(email, password))
-            if (response.isSuccessful) {
-                Result.success(response.body()!!)
-            } else {
-                Result.failure(Exception("Login failed"))
-            }
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+class NousRepository {
+    // Local data or in-memory storage logic can be added here
+    // Example: Mocked data for levels
+    private val lecture = mutableListOf(
+        Lecture(id = 1, name = "Level 1", description = "1", videoPath = ""),
+        Lecture(id = 2, name = "Level 2", "","")
+    )
+
+    fun getLevels(): List<Lecture> {
+        return lecture
     }
 
-    suspend fun getLevels(): Result<List<Level>> {
-        return try {
-            val response = api.getLevels()
-            if (response.isSuccessful) {
-                Result.success(response.body()!!)
-            } else {
-                Result.failure(Exception("Failed to fetch levels"))
-            }
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-
-    suspend fun createLevel(level: Level): Result<Level> {
-        return try {
-            val response = api.createLevel(level)
-            if (response.isSuccessful) {
-                Result.success(response.body()!!)
-            } else {
-                Result.failure(Exception("Failed to create level"))
-            }
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+    fun createLevel(level: Lecture): Lecture {
+        lecture.add(level)
+        return level
     }
 }
+
