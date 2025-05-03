@@ -29,10 +29,33 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        initializeViews()
-        loadLectures()
-    }
+        videoView = findViewById(R.id.videoView)
 
+        // Load lectures and play the first one
+        lectures = repository.getLectures()
+        playLectureVideo()
+    }
+    private fun playLectureVideo() {
+        if (currentLectureIndex < lectures.size) {
+            val lecture = lectures[currentLectureIndex]
+
+            // Set the video path from the lecture's videoPath
+            val videoUri = Uri.parse(lecture.videoPath)
+            videoView.setVideoURI(videoUri)
+
+            // Set a listener to handle video completion
+            videoView.setOnCompletionListener {
+                Toast.makeText(this, "Completed: ${lecture.name}", Toast.LENGTH_SHORT).show()
+                currentLectureIndex++
+                playLectureVideo() // Play the next lecture
+            }
+
+            // Start playing the video
+            videoView.start()
+        } else {
+            Toast.makeText(this, "No more lectures available.", Toast.LENGTH_SHORT).show()
+        }
+    }
 
 
     private fun initializeViews() {
@@ -54,7 +77,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun loadLectures() {
         // Fetch lectures directly from the repository
-        lectures = repository.getLevels()
+        lectures = repository.getLectures()
 
         // Load the first lecture
         loadCurrentLecture()
