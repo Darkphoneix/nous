@@ -1,127 +1,121 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
 
-    <LinearLayout
+    <!-- Level Name Input -->
+    <EditText
+        android:id="@+id/levelNameInput"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:hint="Enter Level Name"
+        android:inputType="text" />
 
-        <TextView
+    <!-- Episode Number Input -->
+    <EditText
+        android:id="@+id/episodeNumberInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter Episode Number"
+        android:inputType="number" />
+
+    <!-- Select Video Button -->
+    <Button
+        android:id="@+id/selectVideoButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Select Video" />
+
+    <!-- Selected Video Path -->
+    <TextView
+        android:id="@+id/selectedVideoPath"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="No video selected"
+        android:paddingTop="8dp" />
+
+    <!-- Question Input -->
+    <EditText
+        android:id="@+id/questionInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter Question"
+        android:inputType="text" />
+
+    <!-- Option Inputs -->
+    <EditText
+        android:id="@+id/option1Input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter Option 1"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/option2Input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter Option 2"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/option3Input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter Option 3"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/option4Input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter Option 4"
+        android:inputType="text" />
+
+    <!-- Correct Answer Radio Group -->
+    <RadioGroup
+        android:id="@+id/correctAnswerGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RadioButton
+            android:id="@+id/option1Radio"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Yeni Seviye Ekle"
-            android:textSize="24sp"
-            android:layout_marginBottom="16dp"/>
+            android:text="Option 1" />
 
-        <EditText
-            android:id="@+id/levelNameInput"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Seviye Adı"
-            android:layout_marginBottom="8dp"/>
-
-        <Button
-            android:id="@+id/selectVideoButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Video Seç"
-            android:layout_marginBottom="8dp"/>
-
-        <TextView
-            android:id="@+id/selectedVideoPath"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"/>
-
-        <TextView
+        <RadioButton
+            android:id="@+id/option2Radio"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Soru Ekle"
-            android:textSize="20sp"
-            android:layout_marginBottom="8dp"/>
+            android:text="Option 2" />
 
-        <EditText
-            android:id="@+id/questionInput"
-            android:layout_width="match_parent"
+        <RadioButton
+            android:id="@+id/option3Radio"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="Soru"
-            android:layout_marginBottom="8dp"/>
+            android:text="Option 3" />
 
-        <EditText
-            android:id="@+id/option1Input"
-            android:layout_width="match_parent"
+        <RadioButton
+            android:id="@+id/option4Radio"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="Seçenek 1"
-            android:layout_marginBottom="8dp"/>
+            android:text="Option 4" />
+    </RadioGroup>
 
-        <EditText
-            android:id="@+id/option2Input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Seçenek 2"
-            android:layout_marginBottom="8dp"/>
+    <!-- Add Question Button -->
+    <Button
+        android:id="@+id/addQuestionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Question" />
 
-        <EditText
-            android:id="@+id/option3Input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Seçenek 3"
-            android:layout_marginBottom="8dp"/>
-
-        <EditText
-            android:id="@+id/option4Input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Seçenek 4"
-            android:layout_marginBottom="8dp"/>
-
-        <RadioGroup
-            android:id="@+id/correctAnswerGroup"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginBottom="16dp">
-
-            <RadioButton
-                android:id="@+id/option1Radio"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Seçenek 1 doğru"/>
-
-            <RadioButton
-                android:id="@+id/option2Radio"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Seçenek 2 doğru"/>
-
-            <RadioButton
-                android:id="@+id/option3Radio"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Seçenek 3 doğru"/>
-
-            <RadioButton
-                android:id="@+id/option4Radio"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Seçenek 4 doğru"/>
-        </RadioGroup>
-
-        <Button
-            android:id="@+id/addQuestionButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Soru Ekle"
-            android:layout_marginBottom="8dp"/>
-
-        <Button
-            android:id="@+id/saveLevelButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Seviyeyi Kaydet"/>
-
-    </LinearLayout>
-</ScrollView>
+    <!-- Save Level Button -->
+    <Button
+        android:id="@+id/saveLevelButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save Level" />
+</LinearLayout>

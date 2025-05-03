@@ -22,6 +22,57 @@ class AdminActivity : AppCompatActivity() {
 
     private var selectedVideoUri: Uri? = null
     private val questions = mutableListOf<Question>()
+    companion object {
+        private const val PICK_VIDEO_REQUEST = 1 // Unique request code for video selection
+    }
+
+    private fun addQuestion() {
+        val questionText = questionInput.text.toString()
+        val options = optionInputs.map { it.text.toString() }
+        val correctIndex = correctAnswerGroup.indexOfChild(
+            findViewById(correctAnswerGroup.checkedRadioButtonId)
+        )
+
+        if (questionText.isBlank() || options.any { it.isBlank() } || correctIndex == -1) {
+            Toast.makeText(this, "Fill all fields", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        questions.add(
+            Question(
+                id = questions.size,
+                question = questionText,
+                options = options,
+                correctIndex = correctIndex,
+                levelId = 0 // Temporary level ID
+            )
+        )
+
+        // Clear inputs
+        questionInput.text.clear()
+        optionInputs.forEach { it.text.clear() }
+        correctAnswerGroup.clearCheck()
+
+        Toast.makeText(this, "Question added", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun setupClickListeners() {
+        selectVideoButton.setOnClickListener {
+            val intent = Intent().apply {
+                type = "video/*"
+                action = Intent.ACTION_GET_CONTENT
+            }
+            startActivityForResult(Intent.createChooser(intent, "Select Video"), PICK_VIDEO_REQUEST)
+        }
+
+        addQuestionButton.setOnClickListener {
+            addQuestion()
+        }
+
+        saveLevelButton.setOnClickListener {
+            saveLevel()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
