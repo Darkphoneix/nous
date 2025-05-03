@@ -4,11 +4,11 @@ import android.net.Uri
 import android.os.Bundle
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import com.example.nous.models.Level
-import com.example.nous.models.Question
+import com.example.nous.data.model.Lecture
+import com.example.nous.data.model.Question
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var levelTextView: TextView
+    private lateinit var lectureTextView: TextView
     private lateinit var videoView: VideoView
     private lateinit var progressTextView: TextView
     private lateinit var progressBar: ProgressBar
@@ -16,8 +16,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var optionsLayout: LinearLayout
     private lateinit var optionButtons: List<Button>
 
-    private var levels: List<Level> = listOf() // List of levels (episodes)
-    private var currentLevelIndex = 0
+    private var lectures: List<Lecture> = listOf() // List of lectures
+    private var currentLectureIndex = 0
     private var currentQuestionIndex = 0
     private var correctAnswers = 0
 
@@ -26,11 +26,11 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         initializeViews()
-        loadLevels()
+        loadLectures()
     }
 
     private fun initializeViews() {
-        levelTextView = findViewById(R.id.levelTextView)
+        lectureTextView = findViewById(R.id.lectureTextView)
         videoView = findViewById(R.id.videoView)
         progressTextView = findViewById(R.id.progressTextView)
         progressBar = findViewById(R.id.progressBar)
@@ -44,69 +44,101 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-    private fun loadLevels() {
-        // Fetch levels sorted by episodeNumber from storage or backend (currently TODO)
-        levels = listOf(
-            Level(1, "Intro to Philosophy", "android.resource://${packageName}/raw/intro_video", listOf(), 1),
-            Level(2, "Philosophy and Logic", "android.resource://${packageName}/raw/logic_video", listOf(), 2)
-        ).sortedBy { it.episodeNumber }
+    private fun loadLectures() {
+        // Load lectures from a local source (simulating AdminActivity's saved lectures)
+        lectures = listOf(
+            Lecture(
+                id = 1,
+                name = "Introduction to Philosophy",
+                description = "A beginner's guide to philosophy.",
+                videoPath = "android.resource://${packageName}/raw/intro_video",
+                questions = mutableListOf(
+                    Question(
+                        id = "1",
+                        levelId = "1",
+                        question = "What is philosophy?",
+                        options = listOf("Love of wisdom", "Science of nature", "Study of stars", "None of the above"),
+                        correctOptionIndex = 0,
+                        explanation = "Philosophy means love of wisdom."
+                    )
+                )
+            ),
+            Lecture(
+                id = 2,
+                name = "Philosophy and Logic",
+                description = "An introduction to logical thinking.",
+                videoPath = "android.resource://${packageName}/raw/logic_video",
+                questions = mutableListOf(
+                    Question(
+                        id = "2",
+                        levelId = "2",
+                        question = "What is logic?",
+                        options = listOf("Study of arguments", "Study of wisdom", "Study of emotions", "Study of stars"),
+                        correctOptionIndex = 0,
+                        explanation = "Logic is the study of arguments."
+                    )
+                )
+            )
+        )
 
-        loadCurrentLevel()
+        // Load the first lecture
+        loadCurrentLecture()
     }
 
-    private fun loadCurrentLevel() {
-        if (currentLevelIndex < levels.size) {
-            val level = levels[currentLevelIndex]
-            levelTextView.text = level.name
-            videoView.setVideoURI(Uri.parse(level.videoPath))
+    private fun loadCurrentLecture() {
+        if (currentLectureIndex < lectures.size) {
+            val lecture = lectures[currentLectureIndex]
+            lectureTextView.text = lecture.name
+            videoView.setVideoURI(Uri.parse(lecture.videoPath))
             videoView.setOnCompletionListener {
-                startQuestions(level)
+                startQuestions(lecture)
             }
             videoView.start()
         } else {
-            Toast.makeText(this, "No more episodes", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "No more lectures available.", Toast.LENGTH_SHORT).show()
         }
     }
 
-    private fun startQuestions(level: Level) {
-        progressBar.max = level.questions.size
+    private fun startQuestions(lecture: Lecture) {
+        progressBar.max = lecture.questions.size
         currentQuestionIndex = 0
-        setupQuestion(level)
+        correctAnswers = 0
+        setupQuestion(lecture)
     }
 
-    private fun setupQuestion(level: Level) {
-        if (currentQuestionIndex < level.questions.size) {
-            val question = level.questions[currentQuestionIndex]
+    private fun setupQuestion(lecture: Lecture) {
+        if (currentQuestionIndex < lecture.questions.size) {
+            val question = lecture.questions[currentQuestionIndex]
             questionTextView.text = question.question
 
             question.options.forEachIndexed { index, option ->
                 optionButtons[index].apply {
                     text = option
-                    setOnClickListener { checkAnswer(level, index) }
+                    setOnClickListener { checkAnswer(lecture, index) }
                 }
             }
 
-            progressTextView.text = "Progress: $currentQuestionIndex/${level.questions.size}"
+            progressTextView.text = "Progress: $currentQuestionIndex/${lecture.questions.size}"
             progressBar.progress = currentQuestionIndex
         } else {
-            currentLevelIndex++
-            loadCurrentLevel()
+            Toast.makeText(this, "Lecture completed! Correct answers: $correctAnswers/${lecture.questions.size}", Toast.LENGTH_LONG).show()
+            currentLectureIndex++
+            loadCurrentLecture()
         }
     }
 
-    private fun checkAnswer(level: Level, selectedIndex: Int) {
-        val question = level.questions[currentQuestionIndex]
+    private fun checkAnswer(lecture: Lecture, selectedIndex: Int) {
+        val question = lecture.questions[currentQuestionIndex]
 
         optionButtons.forEach { it.isEnabled = false }
-
-        if (selectedIndex == question.correctIndex) {
+        if (selectedIndex == question.correctOptionIndex) {
             correctAnswers++
         }
 
         android.os.Handler().postDelayed({
             optionButtons.forEach { it.isEnabled = true }
             currentQuestionIndex++
-            setupQuestion(level)
+            setupQuestion(lecture)
         }, 1500)
     }
 }

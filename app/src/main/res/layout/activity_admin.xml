@@ -1,127 +1,149 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:padding="16dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Yeni Seviye Ekle"
-            android:textSize="24sp"
-            android:layout_marginBottom="16dp"/>
-
+        <!-- Lecture Details -->
         <EditText
             android:id="@+id/lectureNameInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Seviye Adı"
-            android:layout_marginBottom="8dp"/>
+            android:hint="Enter Lecture Name"
+            android:inputType="text" />
 
-        <Button
-            android:id="@+id/selectVideoButton"
+        <EditText
+            android:id="@+id/lectureDescriptionInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Video Seç"
-            android:layout_marginBottom="8dp"/>
+            android:hint="Enter Lecture Description"
+            android:inputType="text" />
+
+        <!-- Video Selection -->
+        <Button
+            android:id="@+id/selectVideoButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Select Video"
+            android:layout_marginTop="8dp" />
 
         <TextView
             android:id="@+id/selectedVideoPath"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"/>
+            android:text="No video selected"
+            android:paddingTop="8dp" />
 
+        <!-- Questions Section -->
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Soru Ekle"
-            android:textSize="20sp"
-            android:layout_marginBottom="8dp"/>
+            android:text="Add Questions"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:paddingTop="16dp" />
 
         <EditText
             android:id="@+id/questionInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Soru"
-            android:layout_marginBottom="8dp"/>
+            android:hint="Enter Question"
+            android:inputType="text"
+            android:layout_marginTop="8dp" />
 
         <EditText
             android:id="@+id/option1Input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Seçenek 1"
-            android:layout_marginBottom="8dp"/>
+            android:hint="Enter Option 1"
+            android:inputType="text" />
 
         <EditText
             android:id="@+id/option2Input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Seçenek 2"
-            android:layout_marginBottom="8dp"/>
+            android:hint="Enter Option 2"
+            android:inputType="text" />
 
         <EditText
             android:id="@+id/option3Input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Seçenek 3"
-            android:layout_marginBottom="8dp"/>
+            android:hint="Enter Option 3"
+            android:inputType="text" />
 
         <EditText
             android:id="@+id/option4Input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Seçenek 4"
-            android:layout_marginBottom="8dp"/>
+            android:hint="Enter Option 4"
+            android:inputType="text" />
 
         <RadioGroup
             android:id="@+id/correctAnswerGroup"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginBottom="16dp">
+            android:layout_marginTop="8dp">
 
             <RadioButton
                 android:id="@+id/option1Radio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Seçenek 1 doğru"/>
+                android:text="Option 1" />
 
             <RadioButton
                 android:id="@+id/option2Radio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Seçenek 2 doğru"/>
+                android:text="Option 2" />
 
             <RadioButton
                 android:id="@+id/option3Radio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Seçenek 3 doğru"/>
+                android:text="Option 3" />
 
             <RadioButton
                 android:id="@+id/option4Radio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Seçenek 4 doğru"/>
+                android:text="Option 4" />
         </RadioGroup>
 
         <Button
             android:id="@+id/addQuestionButton"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:text="Soru Ekle" />
+            android:text="Add Question"
+            android:layout_marginTop="8dp" />
 
+        <!-- Save Lecture Button -->
         <Button
             android:id="@+id/saveLectureButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Save Lecture"
+            android:layout_marginTop="16dp" />
+
+        <!-- List of Lectures -->
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Seviyeyi Kaydet"/>
+            android:text="Lectures"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:paddingTop="16dp" />
 
+        <ListView
+            android:id="@+id/lecturesListView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp" />
     </LinearLayout>
 </ScrollView>

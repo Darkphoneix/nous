@@ -1,5 +1,7 @@
 package com.example.nous.repository
 
+import com.example.nous.api.AuthResponse
+import com.example.nous.api.LoginRequest
 import com.example.nous.api.NousApi
 import com.example.nous.data.model.*
 import javax.inject.Inject

@@ -1,4 +1,4 @@
-package com.example.nous.models
+package com.example.nous.data.model
 
 data class Lecture(
     val id: Int,
