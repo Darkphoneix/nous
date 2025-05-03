@@ -16,7 +16,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var optionsLayout: LinearLayout
     private lateinit var optionButtons: List<Button>
 
-    private var currentLevel: Level? = null
+    private var levels: List<Level> = listOf() // List of levels (episodes)
+    private var currentLevelIndex = 0
     private var currentQuestionIndex = 0
     private var correctAnswers = 0
 
@@ -25,7 +26,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         initializeViews()
-        loadLevel()
+        loadLevels()
     }
 
     private fun initializeViews() {
@@ -43,92 +44,69 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-    private fun loadLevel() {
-        // TODO: Load level data from database or storage
-        // For now, we'll use dummy data
-        currentLevel = Level(
-            1,
-            "Giriş: Felsefe Nedir?",
-            "android.resource://${packageName}/raw/intro_video",
-            listOf(
-                Question(1, "Felsefe kelimesinin kökeni nedir?",
-                    listOf("Philia", "Philosophia", "Sophia", "Philo"), 1, 1)
-                // Add more questions
-            )
-        )
+    private fun loadLevels() {
+        // Fetch levels sorted by episodeNumber from storage or backend (currently TODO)
+        levels = listOf(
+            Level(1, "Intro to Philosophy", "android.resource://${packageName}/raw/intro_video", listOf(), 1),
+            Level(2, "Philosophy and Logic", "android.resource://${packageName}/raw/logic_video", listOf(), 2)
+        ).sortedBy { it.episodeNumber }
 
-        setupVideo()
+        loadCurrentLevel()
     }
 
-    private fun setupVideo() {
-        currentLevel?.let { level ->
+    private fun loadCurrentLevel() {
+        if (currentLevelIndex < levels.size) {
+            val level = levels[currentLevelIndex]
             levelTextView.text = level.name
             videoView.setVideoURI(Uri.parse(level.videoPath))
             videoView.setOnCompletionListener {
-                startQuestions()
+                startQuestions(level)
             }
             videoView.start()
+        } else {
+            Toast.makeText(this, "No more episodes", Toast.LENGTH_SHORT).show()
         }
     }
 
-    private fun startQuestions() {
-        currentLevel?.let { level ->
-            progressBar.max = level.questions.size
-            setupQuestion()
-        }
+    private fun startQuestions(level: Level) {
+        progressBar.max = level.questions.size
+        currentQuestionIndex = 0
+        setupQuestion(level)
     }
 
-    private fun setupQuestion() {
-        currentLevel?.let { level ->
-            if (currentQuestionIndex < level.questions.size) {
-                val question = level.questions[currentQuestionIndex]
-                questionTextView.text = question.question
-
-                question.options.forEachIndexed { index, option ->
-                    optionButtons[index].apply {
-                        text = option
-                        setOnClickListener { checkAnswer(index) }
-                    }
-                }
-
-                progressTextView.text = "İlerleme: $currentQuestionIndex/${level.questions.size}"
-                progressBar.progress = currentQuestionIndex
-            } else {
-                showResults()
-            }
-        }
-    }
-
-    private fun checkAnswer(selectedIndex: Int) {
-        currentLevel?.let { level ->
+    private fun setupQuestion(level: Level) {
+        if (currentQuestionIndex < level.questions.size) {
             val question = level.questions[currentQuestionIndex]
+            questionTextView.text = question.question
 
-            optionButtons.forEach { it.isEnabled = false }
-
-            if (selectedIndex == question.correctIndex) {
-                optionButtons[selectedIndex].setBackgroundColor(getColor(R.color.green))
-                correctAnswers++
-            } else {
-                optionButtons[selectedIndex].setBackgroundColor(getColor(R.color.red))
-                optionButtons[question.correctIndex].setBackgroundColor(getColor(R.color.green))
+            question.options.forEachIndexed { index, option ->
+                optionButtons[index].apply {
+                    text = option
+                    setOnClickListener { checkAnswer(level, index) }
+                }
             }
 
-            android.os.Handler().postDelayed({
-                optionButtons.forEach {
-                    it.setBackgroundColor(getColor(R.color.purple_500))
-                    it.isEnabled = true
-                }
-
-                currentQuestionIndex++
-                setupQuestion()
-            }, 1500)
+            progressTextView.text = "Progress: $currentQuestionIndex/${level.questions.size}"
+            progressBar.progress = currentQuestionIndex
+        } else {
+            currentLevelIndex++
+            loadCurrentLevel()
         }
     }
 
-    private fun showResults() {
-        currentLevel?.let { level ->
-            questionTextView.text = "Tebrikler!\nDoğru cevap sayınız: $correctAnswers/${level.questions.size}"
-            optionsLayout.visibility = LinearLayout.GONE
+    private fun checkAnswer(level: Level, selectedIndex: Int) {
+        val question = level.questions[currentQuestionIndex]
+
+        optionButtons.forEach { it.isEnabled = false }
+
+        if (selectedIndex == question.correctIndex) {
+            correctAnswers++
         }
+
+        android.os.Handler().postDelayed({
+            optionButtons.forEach { it.isEnabled = true }
+            currentQuestionIndex++
+            setupQuestion(level)
+        }, 1500)
     }
 }

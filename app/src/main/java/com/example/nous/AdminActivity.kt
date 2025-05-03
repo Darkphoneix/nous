@@ -7,9 +7,11 @@ import android.os.Bundle
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.example.nous.models.Question
+import com.example.nous.models.Level
 
 class AdminActivity : AppCompatActivity() {
     private lateinit var levelNameInput: EditText
+    private lateinit var episodeNumberInput: EditText // New input for episode number
     private lateinit var selectVideoButton: Button
     private lateinit var selectedVideoPath: TextView
     private lateinit var questionInput: EditText
@@ -21,10 +23,6 @@ class AdminActivity : AppCompatActivity() {
     private var selectedVideoUri: Uri? = null
     private val questions = mutableListOf<Question>()
 
-    companion object {
-        private const val PICK_VIDEO_REQUEST = 1
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_admin)
@@ -35,6 +33,7 @@ class AdminActivity : AppCompatActivity() {
 
     private fun initializeViews() {
         levelNameInput = findViewById(R.id.levelNameInput)
+        episodeNumberInput = findViewById(R.id.episodeNumberInput) // Initialize new input
         selectVideoButton = findViewById(R.id.selectVideoButton)
         selectedVideoPath = findViewById(R.id.selectedVideoPath)
         questionInput = findViewById(R.id.questionInput)
@@ -49,72 +48,25 @@ class AdminActivity : AppCompatActivity() {
         saveLevelButton = findViewById(R.id.saveLevelButton)
     }
 
-    private fun setupClickListeners() {
-        selectVideoButton.setOnClickListener {
-            val intent = Intent().apply {
-                type = "video/*"
-                action = Intent.ACTION_GET_CONTENT
-            }
-            startActivityForResult(Intent.createChooser(intent, "Video Seç"), PICK_VIDEO_REQUEST)
-        }
-
-        addQuestionButton.setOnClickListener {
-            addQuestion()
-        }
-
-        saveLevelButton.setOnClickListener {
-            saveLevel()
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == PICK_VIDEO_REQUEST && resultCode == Activity.RESULT_OK) {
-            data?.data?.let { uri ->
-                selectedVideoUri = uri
-                selectedVideoPath.text = uri.toString()
-            }
-        }
-    }
-
-    private fun addQuestion() {
-        val questionText = questionInput.text.toString()
-        val options = optionInputs.map { it.text.toString() }
-        val correctIndex = correctAnswerGroup.indexOfChild(
-            findViewById(correctAnswerGroup.checkedRadioButtonId)
-        )
-
-        if (questionText.isBlank() || options.any { it.isBlank() } || correctIndex == -1) {
-            Toast.makeText(this, "Tüm alanları doldurun", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        questions.add(Question(
-            questions.size,
-            questionText,
-            options,
-            correctIndex,
-            0 // temporary levelId
-        ))
-
-        // Clear inputs
-        questionInput.text.clear()
-        optionInputs.forEach { it.text.clear() }
-        correctAnswerGroup.clearCheck()
-
-        Toast.makeText(this, "Soru eklendi", Toast.LENGTH_SHORT).show()
-    }
-
     private fun saveLevel() {
         val levelName = levelNameInput.text.toString()
+        val episodeNumber = episodeNumberInput.text.toString().toIntOrNull() ?: 0 // Get episode number
 
-        if (levelName.isBlank() || selectedVideoUri == null || questions.isEmpty()) {
-            Toast.makeText(this, "Tüm gerekli alanları doldurun", Toast.LENGTH_SHORT).show()
+        if (levelName.isBlank() || selectedVideoUri == null || questions.isEmpty() || episodeNumber == 0) {
+            Toast.makeText(this, "Fill all required fields", Toast.LENGTH_SHORT).show()
             return
         }
 
-        // TODO: Save level to database or storage
-        Toast.makeText(this, "Seviye kaydedildi", Toast.LENGTH_SHORT).show()
+        val newLevel = Level(
+            id = 0, // Temporary ID, should be replaced by actual ID from the database
+            name = levelName,
+            videoPath = selectedVideoUri.toString(),
+            questions = questions,
+            episodeNumber = episodeNumber
+        )
+
+        // Save the level to the database or backend here (currently TODO)
+        Toast.makeText(this, "Level saved", Toast.LENGTH_SHORT).show()
         finish()
     }
 }
